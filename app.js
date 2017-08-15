@@ -22,10 +22,10 @@ app.use(bodyParser.json());
  */
 
 app.get('/', function (req, res) {
-    let now = new Date();
-    let dateString = now.toString();
+    now = new Date();
+    dateString = now.toString();
 
-    let message = { 
+    message = {
         app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
         headings: {"en": "CEX.IO Alert"},
         contents: {"en": dateString},
@@ -34,8 +34,8 @@ app.get('/', function (req, res) {
 
     res.send('This is RESTFul API for Tortoise Project');
 
-    var refreshIntervalId = setInterval(function(message) {
-        this.sendNotification(message)
+    refreshIntervalId = setInterval(function(message) {
+        sendNotification(message);
     }, 10000);
     // sendNotification(message);
 });
