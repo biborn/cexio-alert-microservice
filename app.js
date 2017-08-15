@@ -24,8 +24,24 @@ app.use(bodyParser.json());
 app.get('/', function (req, res) {
     let now = new Date();
     let dateString = now.toString();
+
+    let message = { 
+        app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
+        headings: {"en": "CEX.IO Alert"},
+        contents: {"en": dateString},
+        included_segments: ["All"]
+    };
+
     res.send('This is RESTFul API for Tortoise Project');
-    sendNotification(message);
+
+    var refreshIntervalId = setInterval(sendNotification(message), 10000);
+    // sendNotification(message);
+});
+
+app.get('/stop', function (req, res) {
+    /* later */
+    clearInterval(refreshIntervalId);
+    res.send('Stopping service');
 });
 
 var sendNotification = function(data, input) {
@@ -56,13 +72,6 @@ var sendNotification = function(data, input) {
     
     req.write(JSON.stringify(data));
     req.end();
-};
-  
-var message = { 
-    app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
-    headings: {"en": "CEX.IO Alert"},
-    contents: {"en": new Date().toDateString()},
-    included_segments: ["All"]
 };
 
 app.listen(app.get('port'), function() {
