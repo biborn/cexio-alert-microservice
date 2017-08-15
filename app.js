@@ -22,11 +22,13 @@ app.use(bodyParser.json());
  */
 
 app.get('/', function (req, res) {
+    let now = new Date();
+    let dateString = now.toString();
     res.send('This is RESTFul API for Tortoise Project');
-    sendNotification(message);
+    sendNotification(message, dateString);
 });
 
-var sendNotification = function(data) {
+var sendNotification = function(data, input) {
     var headers = {
       "Content-Type": "application/json; charset=utf-8",
       "Authorization": "Basic ZjExZGRjYmQtOWIwOC00MTE2LWFmNDQtNGI4MGExZTUwYWJm"
@@ -58,7 +60,8 @@ var sendNotification = function(data) {
   
 var message = { 
     app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
-    contents: {"en": "English Message"},
+    headings: {"en": "CEX.IO Alert"},
+    contents: {"en": input},
     included_segments: ["All"]
 };
 
