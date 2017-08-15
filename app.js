@@ -34,7 +34,9 @@ app.get('/', function (req, res) {
 
     res.send('This is RESTFul API for Tortoise Project');
 
-    var refreshIntervalId = setInterval(sendNotification(message), 10000);
+    var refreshIntervalId = setInterval(function(message) {
+        this.sendNotification(message)
+    }, 10000);
     // sendNotification(message);
 });
 
