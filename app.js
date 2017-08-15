@@ -19,26 +19,42 @@ app.use(bodyParser.json());
  * Root Endpoint
  */
 
-app.get('/', function (req, res) {
+app.get('/:_setprice', function (req, res) {
     res.send('This is RESTFul API for Tortoise Project');
+    setprice = req.params._setprice;
 
     refreshIntervalId = setInterval(function () {
 
         getPrice(function(result) {
             console.log('RESULT:', result);
-            var now = new Date();
-            var dateString = now.toString();
-            var message = {
-                app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
-                headings: {"en": "CEX.IO Alert"},
-                contents: {"en": result.toString()},
-                included_segments: ["All"]
-            };
 
-            sendNotification(message);
+            var treshold = JSON.parse(result);
+            console.log('TRESHOLD:', treshold);
+
+            if (setprice > Number(treshold.lprice)) {
+                console.log('SETPRICE IS LOWER:');
+                console.log('PRICE FROM CEX.IO:', treshold.lprice);
+
+                var now = new Date();
+                var dateString = now.toLocaleString('en-MY', { hour: 'numeric',minute:'numeric', hour12: true });
+                var messageString = dateString + '  Bitcoin price is low!: USD' + treshold.lprice;
+                var message = {
+                    app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
+                    headings: {"en": "CEX.IO Alert"},
+                    contents: {"en": messageString},
+                    included_segments: ["All"]
+                };
+
+                sendNotification(message);
+            } else {
+                console.log('PRICE IS HIGHER:', treshold.lprice);
+            }
+
+
+
         });
 
-    }, 10000);
+    }, 15000);
     // sendNotification(message);
 });
 
