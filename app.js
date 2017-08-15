@@ -27,9 +27,8 @@ app.get('/:_setprice', function (req, res) {
     }*/
 
     refreshIntervalId = setInterval(function () {
-
+        pingHeroku();
         getPrice(function(result) {
-            https.get("https://cexioalert.herokuapp.com");
             console.log('RESULT:', result);
 
             var treshold = JSON.parse(result);
@@ -63,10 +62,51 @@ app.get('/:_setprice', function (req, res) {
 });
 
 app.get('/stop', function (req, res) {
+
+    res.send('Stopping service');
+
     /* later */
     clearInterval(refreshIntervalId);
-    res.send('Stopping service');
 });
+
+app.get('/ping', function (req, res) {
+    res.send('Ping Successful!');
+});
+
+var pingHeroku = function() {
+    var options = {
+        host: 'cexioalert.herokuapp.com',
+        port: 443,
+        path: '/ping',
+        method: 'GET'
+
+    };
+
+    var body = "--START--";
+
+    var req = https.request(options, function (res) {
+        console.log('STATUS: ' + res.statusCode);
+        console.log('HEADERS: ' + JSON.stringify(res.headers));
+
+        res.on('data', function (chunk) {
+            // body += chunk;
+            // callback(chunk);
+            console.log('PING:', chunk);
+        });
+
+        res.on('close', function () {
+            console.log("\n\nClose received!");
+        });
+
+    });
+
+    req.on('error', function (e) {
+        console.log('problem with request: ' + e.message);
+    });
+    req.end();
+
+    return body + '... received';
+};
 
 var getPrice = function (callback) {
     var options = {
