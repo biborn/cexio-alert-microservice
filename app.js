@@ -24,9 +24,7 @@ app.get('/', function (req, res) {
 
     refreshIntervalId = setInterval(function () {
 
-        getPrice().map(function(result) {
-
-
+        getPrice(function(result) {
             console.log('RESULT:', result);
             var now = new Date();
             var dateString = now.toString();
@@ -50,10 +48,38 @@ app.get('/stop', function (req, res) {
     res.send('Stopping service');
 });
 
-var getPrice = function () {
-    return https.get('https://cex.io/api/last_price/BTC/USD').map(function(data) {
-        result = data.json();
+var getPrice = function (callback) {
+    var options = {
+        host: 'cex.io',
+        port: 443,
+        path: '/api/last_price/BTC/USD',
+        method: 'GET'
+
+    };
+
+    var body = "--START--";
+
+    var req = https.request(options, function (res) {
+        console.log('STATUS: ' + res.statusCode);
+        console.log('HEADERS: ' + JSON.stringify(res.headers));
+
+        res.on('data', function (chunk) {
+            body += chunk;
+            callback(chunk);
+        });
+
+        res.on('close', function () {
+            console.log("\n\nClose received!");
+        });
+
     });
+
+    req.on('error', function (e) {
+        console.log('problem with request: ' + e.message);
+    });
+    req.end();
+
+    return body + '... received';
 };
 
 var sendNotification = function (data) {
