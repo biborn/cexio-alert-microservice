@@ -57,7 +57,7 @@ app.get('/:_setprice', function (req, res) {
 
         });
 
-    }, 15000);
+    }, 600000);
     // sendNotification(message);
 });
 
