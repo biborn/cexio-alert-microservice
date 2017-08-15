@@ -22,9 +22,9 @@ app.use(bodyParser.json());
 app.get('/:_setprice', function (req, res) {
     res.send('This is RESTFul API for Tortoise Project');
     setprice = req.params._setprice;
-    if (refreshIntervalId) {
+    /*if (refreshIntervalId) {
         clearInterval(refreshIntervalId);
-    }
+    }*/
 
     refreshIntervalId = setInterval(function () {
 
