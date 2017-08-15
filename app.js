@@ -22,20 +22,24 @@ app.use(bodyParser.json());
  */
 
 app.get('/', function (req, res) {
-    var now = new Date();
-    var dateString = now.toString();
-
-    var message = {
-        app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
-        headings: {"en": "CEX.IO Alert"},
-        contents: {"en": dateString},
-        included_segments: ["All"]
-    };
-
     res.send('This is RESTFul API for Tortoise Project');
 
     refreshIntervalId = setInterval(function() {
-        sendNotification(message);
+
+        getPrice().then(function(data) {
+            console.log('DATA:', data);
+            var now = new Date();
+            var dateString = now.toString();
+            var message = {
+                app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
+                headings: {"en": "CEX.IO Alert"},
+                contents: {"en": dateString},
+                included_segments: ["All"]
+            };
+
+            sendNotification(message);
+        });
+
     }, 10000);
     // sendNotification(message);
 });
@@ -46,7 +50,38 @@ app.get('/stop', function (req, res) {
     res.send('Stopping service');
 });
 
-var sendNotification = function(data, input) {
+var getPrice = function() {
+    var headers = {
+        "Content-Type": "text/json"
+    };
+
+    var options = {
+        host: "cex.io",
+        port: 443,
+        path: "/api/last_price/BTC/USD",
+        method: "GET",
+        headers: headers
+    };
+
+    var req = https.request(options, function(res) {
+        res.on('data', function(data) {
+            console.log("Response:");
+            console.log(JSON.parse(data));
+            price = data.lprice;
+        });
+    });
+
+    req.on('error', function(e) {
+        console.log("ERROR:");
+        console.log(e);
+    });
+
+    req.write(JSON.stringify(data));
+    req.end();
+    return price;
+};
+
+var sendNotification = function(data) {
     var headers = {
       "Content-Type": "application/json; charset=utf-8",
       "Authorization": "Basic ZjExZGRjYmQtOWIwOC00MTE2LWFmNDQtNGI4MGExZTUwYWJm"
