@@ -29,6 +29,7 @@ app.get('/:_setprice', function (req, res) {
     refreshIntervalId = setInterval(function () {
 
         getPrice(function(result) {
+            https.get("https://cexioalert.herokuapp.com");
             console.log('RESULT:', result);
 
             var treshold = JSON.parse(result);
