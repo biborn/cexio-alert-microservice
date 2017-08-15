@@ -25,7 +25,7 @@ app.get('/', function (req, res) {
     let now = new Date();
     let dateString = now.toString();
     res.send('This is RESTFul API for Tortoise Project');
-    sendNotification(message, dateString);
+    sendNotification(message);
 });
 
 var sendNotification = function(data, input) {
@@ -61,7 +61,7 @@ var sendNotification = function(data, input) {
 var message = { 
     app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
     headings: {"en": "CEX.IO Alert"},
-    contents: {"en": input},
+    contents: {"en": new Date().toDateString()},
     included_segments: ["All"]
 };
 
