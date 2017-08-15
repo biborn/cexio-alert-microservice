@@ -22,6 +22,9 @@ app.use(bodyParser.json());
 app.get('/:_setprice', function (req, res) {
     res.send('This is RESTFul API for Tortoise Project');
     setprice = req.params._setprice;
+    if (refreshIntervalId) {
+        clearInterval(refreshIntervalId);
+    }
 
     refreshIntervalId = setInterval(function () {
 
@@ -36,8 +39,8 @@ app.get('/:_setprice', function (req, res) {
                 console.log('PRICE FROM CEX.IO:', treshold.lprice);
 
                 var now = new Date();
-                var dateString = now.toLocaleString('en-MY', { hour: 'numeric',minute:'numeric', hour12: true });
-                var messageString = dateString + '  Bitcoin price is low!: USD' + treshold.lprice;
+                var dateString = now.toLocaleString('en-MY', { hour: 'numeric',minute:'numeric', hour12: true, timeZone: 'Asia/Kuala_Lumpur' });
+                var messageString = dateString + '  Bitcoin price is low: USD' + treshold.lprice;
                 var message = {
                     app_id: "c9ab32dd-08c6-463e-98f9-4d61f6cd96e2",
                     headings: {"en": "CEX.IO Alert"},
